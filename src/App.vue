@@ -1,52 +1,55 @@
 <script setup>
-import { reactive, computed } from 'vue';
+import { computed, reactive } from 'vue';
 import Cabecalho from './components/Cabecalho.vue';
 import Formulario from './components/Formulario.vue';
 import ListaTarefas from './components/ListaTarefas.vue';
 
+// Estado global para armazenar tarefas e filtro
 const estado = reactive({
   filtro: 'todas',
-  tarefasTemp: '',
   tarefas: [
-    { titulo: 'Estudar Es6', finalizada: false },
+    { titulo: 'Estudar ES6', finalizada: false },
     { titulo: 'Estudar SASS', finalizada: false },
     { titulo: 'Ir para a academia', finalizada: true },
   ],
 });
 
-const getTarefasPendentes = computed(() => estado.tarefas.filter(tarefa => !tarefa.finalizada));
-const getTarefasFinalizadas = computed(() => estado.tarefas.filter(tarefa => tarefa.finalizada));
-
+// Computed para obter as tarefas filtradas
 const getTarefasFiltradas = computed(() => {
   switch (estado.filtro) {
     case 'pendentes':
-      return getTarefasPendentes.value;
+      return estado.tarefas.filter(tarefa => !tarefa.finalizada);
     case 'finalizadas':
-      return getTarefasFinalizadas.value;
+      return estado.tarefas.filter(tarefa => tarefa.finalizada);
     default:
       return estado.tarefas;
   }
 });
 
+// Função para cadastrar uma nova tarefa
 const cadastraTarefa = (novaTarefa) => {
-  const tarefaNova = {
-    titulo: novaTarefa,
-    finalizada: false,
-  };
-  estado.tarefas.push(tarefaNova);
+  if (novaTarefa.trim() !== '') {
+    estado.tarefas.push({ titulo: novaTarefa, finalizada: false });
+  }
+};
+
+// Função para trocar o filtro
+const trocarFiltro = (novoFiltro) => {
+  estado.filtro = novoFiltro;
 };
 </script>
 
 <template>
   <div class="container">
-    <Cabecalho :tarefas-pendentes="getTarefasPendentes.length"/>
-    <Formulario 
-      :trocar-filtro="evento => estado.filtro = evento.target.value" 
-      :tarefas-temp="estado.tarefasTemp" 
-      :edita-tarefa-temp="evento => estado.tarefasTemp = evento.target.value" 
-      :cadastra-tarefa="cadastraTarefa" 
-    />
-    <ListaTarefas :tarefas="getTarefasFiltradas"/>
+    <Cabecalho :tarefas-pendentes="estado.tarefas.filter(tarefa => !tarefa.finalizada).length" />
+    <Formulario @cadastra-tarefa="cadastraTarefa" @trocar-filtro="trocarFiltro" />
+    <ListaTarefas :tarefas="getTarefasFiltradas" />
   </div>
 </template>
-
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: 0 auto; /* Centraliza o conteúdo horizontalmente */
+  padding-top: 2rem; /* Espaçamento superior para melhorar a visualização */
+}
+</style>

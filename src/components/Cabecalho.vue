@@ -10,5 +10,19 @@ const props = defineProps(['tarefasPendentes']);
 </template>
 
 <style scoped>
-/* Adicione seus estilos aqui */
+header {
+  background-color: #f8f9fa; /* Cor clara para destacar o cabeçalho */
+  text-align: center;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #343a40; /* Cor escura para o título */
+}
+
+p {
+  font-size: 1.25rem;
+  color: #6c757d; /* Cor cinza para indicar quantidade de tarefas pendentes */
+}
 </style>
+
